@@ -185,13 +185,13 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* 天干地支 (tiangandizhi.jpeg) */}
+          {/* 天干地支 (tiangandizhi.svg - 独创专属六十甲子干支罗盘，杜绝西方星座重复) */}
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xs transition-transform hover:scale-[1.01]">
             <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
               <img
-                src="/tiangandizhi.jpeg"
-                alt="天干地支盘"
-                className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                src="/tiangandizhi.svg"
+                alt="六十甲子天干地支盘"
+                className="h-full w-full object-contain p-1 transition-transform duration-300 hover:scale-105"
                 loading="lazy"
               />
             </div>
@@ -392,6 +392,15 @@ export function HomePage() {
       </section>
 
       <Disclaimer />
+
+      <div className="mt-4 pb-2 text-center">
+        <Link
+          to="/admin"
+          className="text-[11px] text-muted-foreground/60 hover:text-muted-foreground transition-colors underline"
+        >
+          {t("管理员控制台", "Admin Dashboard", "管理員控制台")}
+        </Link>
+      </div>
     </main>
   );
 }

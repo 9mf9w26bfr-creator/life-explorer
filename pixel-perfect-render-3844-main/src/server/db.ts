@@ -270,4 +270,30 @@ export const db = {
       memoryStore.daily_records.set(key, { tarot, domino, advice, aiReflection });
     }
   },
+
+  async getAllUsers(): Promise<
+    Array<{
+      id: number;
+      email: string;
+      is_verified: boolean;
+      created_at: string;
+    }>
+  > {
+    const p = await getDbPool();
+    if (p && isPostgresAvailable) {
+      const res = await p.query(
+        "SELECT id, email, is_verified, created_at FROM users ORDER BY id DESC;",
+      );
+      return res.rows.map((row) => ({
+        id: row.id,
+        email: row.email,
+        is_verified: row.is_verified,
+        created_at: row.created_at
+          ? new Date(row.created_at).toISOString()
+          : new Date().toISOString(),
+      }));
+    } else {
+      return Array.from(memoryStore.users.values()).sort((a, b) => b.id - a.id);
+    }
+  },
 };

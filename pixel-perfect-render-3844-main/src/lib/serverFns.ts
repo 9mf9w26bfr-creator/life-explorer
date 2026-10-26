@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { env } from "../env";
 import { db } from "../server/db";
 import { sendEmailVerificationCode, verifySessionToken, createSessionToken } from "../server/auth";
 import { calculateTraditionalProfile } from "./chineseZodiac";
@@ -157,4 +158,21 @@ export const getAiReflectionFn = createServerFn({ method: "POST" })
     );
 
     return { success: true, reflection };
+  });
+
+// 8. Admin: Get all registered customers / emails
+export const getAdminUsersFn = createServerFn({ method: "POST" })
+  .validator((data: { password: string }) => data)
+  .handler(async ({ data }) => {
+    const configuredPassword = env.ADMIN_PASSWORD || "admin888";
+    if (data.password !== configuredPassword) {
+      return { success: false, message: "密码错误，请检查管理员密码。", users: [], totalCount: 0 };
+    }
+    const users = await db.getAllUsers();
+    return {
+      success: true,
+      users,
+      totalCount: users.length,
+      message: "用户列表加载成功。",
+    };
   });

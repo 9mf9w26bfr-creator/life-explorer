@@ -33,4 +33,21 @@ describe("Authentication & Anti-Bot Verification Engine", () => {
     const verified = verifySessionToken(tampered);
     expect(verified.valid).toBe(false);
   });
+
+  it("should record verified users and retrieve them for the administrator", async () => {
+    const { db } = await import("../src/server/db");
+    const testEmail = `admin_test_${Date.now()}@example.com`;
+    const code = "999888";
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    await db.saveVerificationCode(testEmail, code, expiresAt);
+    const verified = await db.verifyCode(testEmail, code);
+    expect(verified).toBe(true);
+
+    const allUsers = await db.getAllUsers();
+    expect(Array.isArray(allUsers)).toBe(true);
+    const found = allUsers.find((u) => u.email === testEmail);
+    expect(found).toBeDefined();
+    expect(found?.is_verified).toBe(true);
+  });
 });

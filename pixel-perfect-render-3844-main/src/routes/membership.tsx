@@ -187,6 +187,15 @@ function MembershipPage() {
       />
 
       <Disclaimer />
+
+      <div className="mt-4 pb-4 text-center">
+        <a
+          href="/admin"
+          className="text-[11px] text-muted-foreground/60 hover:text-muted-foreground transition-colors underline"
+        >
+          {t("管理员控制台 (客户邮箱管理)", "Admin Dashboard", "管理員控制台 (客戶郵箱管理)")}
+        </a>
+      </div>
     </main>
   );
 }

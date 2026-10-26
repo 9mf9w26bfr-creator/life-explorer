@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcquiredRouteImport } from './routes/acquired'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DailyRouteImport } from './routes/daily'
 import { Route as InnateRouteImport } from './routes/innate'
 import { Route as MembershipRouteImport } from './routes/membership'
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const AcquiredRoute = AcquiredRouteImport.update({
   id: '/acquired',
   path: '/acquired',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DailyRoute = DailyRouteImport.update({
@@ -44,6 +50,7 @@ const MembershipRoute = MembershipRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/acquired': typeof AcquiredRoute
+  '/admin': typeof AdminRoute
   '/daily': typeof DailyRoute
   '/innate': typeof InnateRoute
   '/membership': typeof MembershipRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/acquired': typeof AcquiredRoute
+  '/admin': typeof AdminRoute
   '/daily': typeof DailyRoute
   '/innate': typeof InnateRoute
   '/membership': typeof MembershipRoute
@@ -59,21 +67,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/acquired': typeof AcquiredRoute
+  '/admin': typeof AdminRoute
   '/daily': typeof DailyRoute
   '/innate': typeof InnateRoute
   '/membership': typeof MembershipRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/acquired' | '/daily' | '/innate' | '/membership'
+  fullPaths: '/' | '/acquired' | '/admin' | '/daily' | '/innate' | '/membership'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/acquired' | '/daily' | '/innate' | '/membership'
-  id: '__root__' | '/' | '/acquired' | '/daily' | '/innate' | '/membership'
+  to: '/' | '/acquired' | '/admin' | '/daily' | '/innate' | '/membership'
+  id:
+    | '__root__'
+    | '/'
+    | '/acquired'
+    | '/admin'
+    | '/daily'
+    | '/innate'
+    | '/membership'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcquiredRoute: typeof AcquiredRoute
+  AdminRoute: typeof AdminRoute
   DailyRoute: typeof DailyRoute
   InnateRoute: typeof InnateRoute
   MembershipRoute: typeof MembershipRoute
@@ -93,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/acquired'
       fullPath: '/acquired'
       preLoaderRoute: typeof AcquiredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/daily': {
@@ -122,6 +146,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcquiredRoute: AcquiredRoute,
+  AdminRoute: AdminRoute,
   DailyRoute: DailyRoute,
   InnateRoute: InnateRoute,
   MembershipRoute: MembershipRoute,
