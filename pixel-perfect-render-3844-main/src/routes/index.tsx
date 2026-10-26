@@ -362,6 +362,35 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* 6. 手机扫码体验卡片 (二维码) */}
+      <section className="mt-6 px-5">
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-sm flex items-center gap-4">
+          <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-white p-1 shadow-xs">
+            <img
+              src="/qrcode.png"
+              alt="手机扫码访问 Life Explorer"
+              className="h-full w-full object-contain"
+              loading="lazy"
+            />
+          </div>
+          <div className="flex flex-col justify-center">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+              {t("移动端专属适配", "Mobile Experience", "移動端專屬適配")}
+            </span>
+            <h3 className="font-serif text-sm font-bold text-foreground">
+              {t("手机扫码快速登录", "Scan QR Code for Mobile Access", "手機掃碼快速登錄")}
+            </h3>
+            <p className="mt-1 text-[11px] text-muted-foreground leading-normal">
+              {t(
+                "微信或手机相机扫码即可直达，随时随地开启每日运势与个性化测评。",
+                "Scan with phone camera to launch mobile experience on life-explorer-eta.vercel.app directly.",
+                "微信或手機相機掃碼即可直達，隨時隨地開啟每日運勢與個性化測評。"
+              )}
+            </p>
+          </div>
+        </div>
+      </section>
+
       <Disclaimer />
     </main>
   );
