@@ -49,5 +49,21 @@ describe("Authentication & Anti-Bot Verification Engine", () => {
     const found = allUsers.find((u) => u.email === testEmail);
     expect(found).toBeDefined();
     expect(found?.is_verified).toBe(true);
+
+    // Test innate profile collection for administrator
+    const sampleInnate = {
+      name: "张三",
+      gender: "male",
+      birthDate: "1990-05-18",
+      birthTime: "08:30",
+    };
+    await db.saveProfile(testEmail, "innate", sampleInnate);
+
+    const usersWithInnate = await db.getAllUsers();
+    const foundWithInnate = usersWithInnate.find((u) => u.email === testEmail);
+    expect(foundWithInnate).toBeDefined();
+    expect(foundWithInnate?.innateProfile).toBeDefined();
+    expect(foundWithInnate?.innateProfile?.name).toBe("张三");
+    expect(foundWithInnate?.innateProfile?.birthDate).toBe("1990-05-18");
   });
 });

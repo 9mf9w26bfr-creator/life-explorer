@@ -12,6 +12,10 @@ export const env = {
     "development",
   GEMINI_API_KEY:
     (import.meta.env["GEMINI_API_KEY"] as string | undefined) || process.env["GEMINI_API_KEY"],
+  GEMINI_MODEL:
+    (import.meta.env["GEMINI_MODEL"] as string | undefined) ||
+    process.env["GEMINI_MODEL"] ||
+    "gemini-2.5-flash",
   DATABASE_URL:
     (import.meta.env["DATABASE_URL"] as string | undefined) || process.env["DATABASE_URL"],
   SMTP_HOST: (import.meta.env["SMTP_HOST"] as string | undefined) || process.env["SMTP_HOST"],

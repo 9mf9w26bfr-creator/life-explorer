@@ -5,7 +5,7 @@ import { sendEmailVerificationCode, verifySessionToken, createSessionToken } fro
 import { calculateTraditionalProfile } from "./chineseZodiac";
 import { getDailyTarot, getDailyDomino } from "./fortuneEngines";
 import { generateDailyAdvice } from "./dailyAdvice";
-import { generateGeminiReflection } from "../server/gemini";
+import { generateGeminiReflection, analyzeFaceAndPalm } from "../server/gemini";
 
 // 1. Send Verification Code (Anti-Bot)
 export const sendVerificationCodeFn = createServerFn({ method: "POST" })
@@ -54,6 +54,65 @@ export const saveProfileFn = createServerFn({ method: "POST" })
     }
     const version = await db.saveProfile(email, data.profileType, data.profileData);
     return { success: true, version };
+  });
+
+// 4b. Analyze and Lock Innate Profile with Face & Palm
+export const analyzeInnateProfileFn = createServerFn({ method: "POST" })
+  .validator(
+    (data: {
+      token?: string | undefined;
+      name: string;
+      gender: string;
+      birthDate: string;
+      birthTime?: string | undefined;
+      birthPlace?: string | undefined;
+      color?: string | undefined;
+      faceImageBase64?: string | undefined;
+      palmImageBase64?: string | undefined;
+    }) => data,
+  )
+  .handler(async ({ data }) => {
+    const traditional = calculateTraditionalProfile(data.birthDate, data.birthTime);
+
+    const facePalmAnalysis = await analyzeFaceAndPalm({
+      name: data.name,
+      gender: data.gender,
+      birthDate: data.birthDate,
+      birthTime: data.birthTime,
+      birthPlace: data.birthPlace,
+      bazi: {
+        yearGanZhi: traditional.yearGanZhi,
+        monthGanZhi: traditional.monthGanZhi,
+        dayGanZhi: traditional.dayGanZhi,
+        timeGanZhi: traditional.timeGanZhi,
+        dominantElement: traditional.dominantElementZh,
+        zodiac: traditional.zodiacZh,
+      },
+      faceImageBase64: data.faceImageBase64,
+      palmImageBase64: data.palmImageBase64,
+    });
+
+    const fullProfile = {
+      name: data.name,
+      gender: data.gender,
+      birthDate: data.birthDate,
+      birthTime: data.birthTime,
+      birthPlace: data.birthPlace,
+      color: data.color,
+      profile: traditional,
+      facePalmAnalysis,
+      hasFacePhoto: Boolean(data.faceImageBase64),
+      hasPalmPhoto: Boolean(data.palmImageBase64),
+    };
+
+    if (data.token) {
+      const { valid, email } = verifySessionToken(data.token);
+      if (valid && email) {
+        await db.saveProfile(email, "innate", fullProfile);
+      }
+    }
+
+    return { success: true, profile: fullProfile };
   });
 
 // 5. Get User Profiles

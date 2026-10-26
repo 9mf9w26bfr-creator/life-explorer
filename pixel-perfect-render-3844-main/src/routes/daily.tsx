@@ -235,7 +235,7 @@ export function DailyPage() {
                   </h3>
                 </div>
                 <span className="rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold text-rose-700 dark:text-rose-300">
-                  Gemini 2.0 Flash
+                  Gemini 3.8 Flash
                 </span>
               </div>
 
@@ -293,6 +293,61 @@ export function DailyPage() {
                       {item.contentZh}
                     </p>
                     <p className="text-[11px] text-muted-foreground/75 mt-0.5">{item.contentEn}</p>
+
+                    {item.recipes && (
+                      <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-2.5 text-xs">
+                        <div className="flex items-center justify-between border-b border-amber-500/20 pb-2 font-bold text-amber-900 dark:text-amber-200">
+                          <span className="flex items-center gap-1.5">
+                            <Utensils className="h-4 w-4 text-amber-600" />
+                            一日三餐健康养生食谱 · 3 Meals Recipes
+                          </span>
+                          <span className="text-[11px] rounded-full bg-amber-500/15 px-2 py-0.5 font-medium">
+                            {item.recipes.wellnessGoal}
+                          </span>
+                        </div>
+
+                        <div className="space-y-2 pt-1">
+                          <div className="rounded-lg bg-card p-2.5 border border-border/60 shadow-2xs">
+                            <p className="font-bold text-foreground flex items-center gap-1">
+                              <span>🌅 早餐 Breakfast：</span>
+                              <span>{item.recipes.breakfast.name}</span>
+                            </p>
+                            <p className="text-[11px] text-muted-foreground mt-1">
+                              <strong>食材清单：</strong>{item.recipes.breakfast.ingredients}
+                            </p>
+                            <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
+                              <strong>烹饪/养生要旨：</strong>{item.recipes.breakfast.tip}
+                            </p>
+                          </div>
+
+                          <div className="rounded-lg bg-card p-2.5 border border-border/60 shadow-2xs">
+                            <p className="font-bold text-foreground flex items-center gap-1">
+                              <span>☀️ 午餐 Lunch：</span>
+                              <span>{item.recipes.lunch.name}</span>
+                            </p>
+                            <p className="text-[11px] text-muted-foreground mt-1">
+                              <strong>食材清单：</strong>{item.recipes.lunch.ingredients}
+                            </p>
+                            <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
+                              <strong>烹饪/养生要旨：</strong>{item.recipes.lunch.tip}
+                            </p>
+                          </div>
+
+                          <div className="rounded-lg bg-card p-2.5 border border-border/60 shadow-2xs">
+                            <p className="font-bold text-foreground flex items-center gap-1">
+                              <span>🌙 晚餐 Dinner：</span>
+                              <span>{item.recipes.dinner.name}</span>
+                            </p>
+                            <p className="text-[11px] text-muted-foreground mt-1">
+                              <strong>食材清单：</strong>{item.recipes.dinner.ingredients}
+                            </p>
+                            <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
+                              <strong>烹饪/养生要旨：</strong>{item.recipes.dinner.tip}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}

@@ -277,13 +277,26 @@ export const db = {
       email: string;
       is_verified: boolean;
       created_at: string;
+      innateProfile?: any;
     }>
   > {
     const p = await getDbPool();
     if (p && isPostgresAvailable) {
-      const res = await p.query(
-        "SELECT id, email, is_verified, created_at FROM users ORDER BY id DESC;",
-      );
+      const res = await p.query(`
+        SELECT 
+          u.id, 
+          u.email, 
+          u.is_verified, 
+          u.created_at,
+          p.data AS innate_profile
+        FROM users u
+        LEFT JOIN LATERAL (
+          SELECT data FROM user_profiles 
+          WHERE user_email = u.email AND profile_type = 'innate' 
+          ORDER BY version DESC LIMIT 1
+        ) p ON true
+        ORDER BY u.id DESC;
+      `);
       return res.rows.map((row) => ({
         id: row.id,
         email: row.email,
@@ -291,9 +304,23 @@ export const db = {
         created_at: row.created_at
           ? new Date(row.created_at).toISOString()
           : new Date().toISOString(),
+        innateProfile:
+          typeof row.innate_profile === "string"
+            ? JSON.parse(row.innate_profile)
+            : row.innate_profile || undefined,
       }));
     } else {
-      return Array.from(memoryStore.users.values()).sort((a, b) => b.id - a.id);
+      return Array.from(memoryStore.users.values())
+        .sort((a, b) => b.id - a.id)
+        .map((u) => {
+          const profiles = memoryStore.user_profiles
+            .filter((p) => p.user_email === u.email && p.profile_type === "innate")
+            .sort((a, b) => b.version - a.version);
+          return {
+            ...u,
+            innateProfile: profiles[0]?.data || undefined,
+          };
+        });
     }
   },
 };
