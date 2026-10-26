@@ -18,6 +18,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [antiBotCode, setAntiBotCode] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -39,15 +40,24 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
       const res = await sendVerificationCodeFn({ data: { email } });
       if (res.success) {
         setStep("code");
-        let msg = t(
-          "验证码已发送至您的邮箱，请查收（防机器人确认）",
-          "Verification code sent to your email. Please check your inbox.",
-          "驗證碼已發送至您的郵箱，請查收（防機器人確認）"
-        );
-        if (res.debugCode) {
-          msg += ` [Dev Code: ${res.debugCode}]`;
+        if (res.antiBotCode) {
+          setAntiBotCode(res.antiBotCode);
+          setNotice(
+            t(
+              "防机器人校验码已生成，请输入以确认非自动化脚本：",
+              "Anti-bot verification code ready. Enter the 6 digits below to activate:",
+              "防機器人校驗碼已生成，請輸入以確認非自動化腳本："
+            )
+          );
+        } else {
+          setNotice(
+            t(
+              "验证码已发送至您的邮箱，请查收（防机器人确认）",
+              "Verification code sent to your email. Please check your inbox.",
+              "驗證碼已發送至您的郵箱，請查收（防機器人確認）"
+            )
+          );
         }
-        setNotice(msg);
       } else {
         setError(res.message);
       }
@@ -163,6 +173,26 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           </form>
         ) : (
           <form onSubmit={handleVerify} className="space-y-3.5">
+            {antiBotCode && (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-center">
+                <span className="text-[11px] font-semibold text-emerald-800 dark:text-emerald-300">
+                  {t("🤖 防机器人安全验证码", "🤖 Anti-Bot Verification Code", "🤖 防機器人安全驗證碼")}
+                </span>
+                <div className="mt-1 flex items-center justify-center gap-2">
+                  <span className="font-mono text-2xl font-bold tracking-widest text-emerald-700 dark:text-emerald-300">
+                    {antiBotCode}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCode(antiBotCode)}
+                    className="rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white shadow hover:bg-emerald-700 transition-colors"
+                  >
+                    {t("一键填入", "Auto Fill", "一鍵填入")}
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-medium text-foreground">
                 {t("6 位验证码", "6-Digit Verification Code", "6 位驗證碼")}
