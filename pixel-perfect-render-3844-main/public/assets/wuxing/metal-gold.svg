@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE380"/>
+      <stop offset="40%" stop-color="#E6B800"/>
+      <stop offset="100%" stop-color="#B38F00"/>
+    </linearGradient>
+  </defs>
+  <rect fill="#E6FCFF" width="120" height="120" rx="12"/>
+  <rect x="25" y="35" width="70" height="50" rx="6" fill="url(#goldGrad)" stroke="#00B8D9" stroke-width="1.5"/>
+  <circle cx="60" cy="60" r="18" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+  <text x="60" y="66" text-anchor="middle" font-size="14" font-weight="bold" fill="#806600">金</text>
+  <rect x="35" y="45" width="50" height="2" rx="1" fill="#FFFFFF" opacity="0.6"/>
+  <rect x="35" y="73" width="30" height="2" rx="1" fill="#FFFFFF" opacity="0.4"/>
+</svg>

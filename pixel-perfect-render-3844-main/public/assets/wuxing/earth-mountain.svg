@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="earthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFAB00"/>
+      <stop offset="100%" stop-color="#B36B00"/>
+    </linearGradient>
+  </defs>
+  <rect fill="#FFF7E5" width="120" height="120" rx="12"/>
+  <polygon fill="#E5B040" points="60,25 20,95 10,95 60,15 110,95 100,95"/>
+  <polygon fill="url(#earthGrad)" points="60,25 35,95 85,95"/>
+  <polygon fill="#FFFFFF" opacity="0.9" points="60,25 50,45 70,45"/>
+  <polygon fill="#FFF2CC" opacity="0.6" points="60,25 55,35 65,35"/>
+  <path fill="#B36B00" opacity="0.15" d="M30,80 L45,60 L55,72 L70,50 L90,80 Z"/>
+</svg>

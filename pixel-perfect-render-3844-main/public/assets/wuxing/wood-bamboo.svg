@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="bambooGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#36B37E"/>
+      <stop offset="100%" stop-color="#006644"/>
+    </linearGradient>
+  </defs>
+  <rect fill="#E3FCEF" width="120" height="120" rx="12"/>
+  <g fill="url(#bambooGrad)" stroke="#006644" stroke-width="1.5">
+    <rect x="22" y="18" width="8" height="85" rx="2"/>
+    <rect x="22" y="35" width="8" height="4" rx="1"/>
+    <rect x="22" y="55" width="8" height="4" rx="1"/>
+    <rect x="22" y="75" width="8" height="4" rx="1"/>
+    
+    <rect x="42" y="12" width="8" height="92" rx="2"/>
+    <rect x="42" y="32" width="8" height="4" rx="1"/>
+    <rect x="42" y="58" width="8" height="4" rx="1"/>
+    <rect x="42" y="82" width="8" height="4" rx="1"/>
+    
+    <rect x="62" y="20" width="8" height="82" rx="2"/>
+    <rect x="62" y="40" width="8" height="4" rx="1"/>
+    <rect x="62" y="65" width="8" height="4" rx="1"/>
+    
+    <rect x="82" y="25" width="8" height="75" rx="2"/>
+    <rect x="82" y="48" width="8" height="4" rx="1"/>
+    <rect x="82" y="72" width="8" height="4" rx="1"/>
+    
+    <path d="M30,25 Q45,10 60,22 M50,18 Q65,5 80,20" stroke-width="2" fill="none" stroke="#2E9969"/>
+  </g>
+</svg>
