@@ -60,7 +60,7 @@ function getTodayKey(): string {
 }
 
 export function DailyPage() {
-  const { t } = useI18n();
+  const { t, isZh } = useI18n();
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -72,12 +72,12 @@ export function DailyPage() {
   const dateKey = getTodayKey();
 
   useEffect(() => {
-    const t = getStoredToken();
-    const e = getStoredEmail();
-    if (t && e) {
-      setToken(t);
-      setCurrentUser(e);
-      loadDaily(t);
+    const tr = getStoredToken();
+    const em = getStoredEmail();
+    if (tr && em) {
+      setToken(tr);
+      setCurrentUser(em);
+      loadDaily(tr);
     }
   }, []);
 
@@ -114,7 +114,7 @@ export function DailyPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-rose-500/5 via-background to-background">
+    <main className="min-h-screen bg-gradient-to-b from-rose-500/5 via-background to-background pb-16">
       <PageHeader zh="每日建议" en="Daily Advice" element="fire">
         {t(
           "结合今日节律、塔罗象征、骨牌玄学与生活哲学生成的每日启发。每日仅生成一次并锁定。",
@@ -128,10 +128,12 @@ export function DailyPage() {
         <div className="flex items-center justify-between text-xs text-muted-foreground border-b border-border pb-2">
           <div className="flex items-center gap-1.5">
             <CalendarDays className="h-4 w-4 text-primary" />
-            <span className="font-medium text-foreground">公历今日：{dateKey}</span>
+            <span className="font-medium text-foreground">
+              {t("公历今日：", "Today (Solar): ", "公曆今日：")}{dateKey}
+            </span>
           </div>
-          <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] text-foreground">
-            当日锁定 · 无法重抽
+          <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] text-foreground font-medium">
+            {t("当日锁定 · 无法重抽", "Daily Locked · One Draw Only", "當日鎖定 · 無法重抽")}
           </span>
         </div>
 
@@ -145,7 +147,8 @@ export function DailyPage() {
             <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
               {t(
                 "每日专属塔罗抽牌、骨牌指引、九维生活习惯建议与 Google Gemini 专属感悟，验证邮箱即可永久免费解锁！",
-                "Daily locked Tarot draw, electronic dominoes, 9-dimension lifestyle habits, and Gemini AI reflections. 100% Free."
+                "Daily locked Tarot draw, electronic dominoes, 9-dimension lifestyle habits, and Gemini AI reflections. 100% Free.",
+                "每日專屬塔羅抽牌、骨牌指引、九維生活習慣建議與 Google Gemini 專屬感悟，驗證郵箱即可永久免費解鎖！",
               )}
             </p>
             <button
@@ -161,7 +164,13 @@ export function DailyPage() {
         {currentUser && loading && (
           <div className="flex flex-col items-center justify-center p-12 text-center text-muted-foreground">
             <Loader2 className="h-8 w-8 animate-spin text-rose-600" />
-            <p className="mt-3 text-xs">{t("正在抽取今日塔罗与生成九维生活建议...", "Drawing daily Tarot and generating 9-dimension advice...")}</p>
+            <p className="mt-3 text-xs">
+              {t(
+                "正在抽取今日塔罗与生成九维生活建议...",
+                "Drawing daily Tarot and generating 9-dimension advice...",
+                "正在抽取今日塔羅與生成九維生活建議...",
+              )}
+            </p>
           </div>
         )}
 
@@ -183,21 +192,27 @@ export function DailyPage() {
               <div className="mt-2.5 rounded-xl bg-rose-500/5 p-4 border border-rose-500/20">
                 <div className="flex items-baseline justify-between">
                   <p className="font-serif text-xl font-bold text-foreground">
-                    {dailyData.tarot.nameZh}{" "}
-                    <span className="text-xs font-normal text-muted-foreground">
-                      ({dailyData.tarot.nameEn})
-                    </span>
+                    {isZh ? dailyData.tarot.nameZh : dailyData.tarot.nameEn}{" "}
+                    {isZh && (
+                      <span className="text-xs font-normal text-muted-foreground">
+                        ({dailyData.tarot.nameEn})
+                      </span>
+                    )}
                   </p>
                   <span className="rounded-full bg-rose-500/20 px-2.5 py-0.5 text-xs font-bold text-rose-700 dark:text-rose-300">
-                    {dailyData.tarot.orientationZh} · {dailyData.tarot.orientationEn}
+                    {isZh
+                      ? `${dailyData.tarot.orientationZh} · ${dailyData.tarot.orientationEn}`
+                      : dailyData.tarot.orientationEn}
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                  {dailyData.tarot.meaningZh}
+                <p className="mt-2 text-xs text-foreground leading-relaxed">
+                  {isZh ? dailyData.tarot.meaningZh : dailyData.tarot.meaningEn}
                 </p>
-                <p className="mt-1 text-[11px] text-muted-foreground/80 italic">
-                  {dailyData.tarot.meaningEn}
-                </p>
+                {isZh && (
+                  <p className="mt-1 text-[11px] text-muted-foreground/80 italic">
+                    {dailyData.tarot.meaningEn}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -218,9 +233,13 @@ export function DailyPage() {
                 </div>
                 <div>
                   <p className="font-bold text-sm text-foreground">
-                    {dailyData.domino.nameZh} · {dailyData.domino.traditionalSignZh}
+                    {isZh
+                      ? `${dailyData.domino.nameZh} · ${dailyData.domino.traditionalSignZh}`
+                      : `Domino [${dailyData.domino.tile[0]}|${dailyData.domino.tile[1]}] · ${dailyData.domino.traditionalSignZh}`}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">{dailyData.domino.adviceZh}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {dailyData.domino.adviceZh}
+                  </p>
                 </div>
               </div>
             </div>
@@ -248,7 +267,8 @@ export function DailyPage() {
                   <p className="text-xs text-muted-foreground mb-3">
                     {t(
                       "点击下方按钮，由 Gemini AI 综合您的生辰五行与今日抽签，生成一段温暖的晨间反思。",
-                      "Click below to generate a mindful morning reflection integrating your BaZi and today's draw."
+                      "Click below to generate a mindful morning reflection integrating your BaZi and today's draw.",
+                      "點擊下方按鈕，由 Gemini AI 綜合您的生辰五行與今日抽籤，生成一段溫暖的晨間反思。",
                     )}
                   </p>
                   <button
@@ -267,11 +287,17 @@ export function DailyPage() {
             <div className="space-y-2.5 pt-2">
               <div className="flex items-center justify-between">
                 <h3 className="font-serif text-base font-bold text-foreground">
-                  九维生活习惯建议 · 9-Dimension Advice
+                  {t("九维生活习惯建议", "9-Dimension Lifestyle Habits", "九維生活習慣建議")}
                 </h3>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>幸运色: {dailyData.advice.luckyColorZh}</span>
-                  <span>数字: {dailyData.advice.luckyNumber}</span>
+                  <span>
+                    {t("幸运色: ", "Lucky Color: ", "幸運色: ")}
+                    {isZh ? dailyData.advice.luckyColorZh : dailyData.advice.luckyColorEn}
+                  </span>
+                  <span>
+                    {t("数字: ", "Number: ", "數字: ")}
+                    {dailyData.advice.luckyNumber}
+                  </span>
                 </div>
               </div>
 
@@ -285,64 +311,74 @@ export function DailyPage() {
                     <div className="flex items-center gap-2 text-xs font-medium text-primary">
                       <IconComponent className="h-4 w-4" />
                       <span>
-                        {item.categoryZh} · {item.categoryEn}
+                        {isZh ? `${item.categoryZh} · ${item.categoryEn}` : item.categoryEn}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm font-bold text-foreground">{item.titleZh}</p>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                      {item.contentZh}
+                    <p className="mt-1 text-sm font-bold text-foreground">
+                      {isZh ? item.titleZh : item.titleEn}
                     </p>
-                    <p className="text-[11px] text-muted-foreground/75 mt-0.5">{item.contentEn}</p>
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                      {isZh ? item.contentZh : item.contentEn}
+                    </p>
+                    {isZh && (
+                      <p className="text-[11px] text-muted-foreground/75 mt-0.5">{item.contentEn}</p>
+                    )}
 
                     {item.recipes && (
                       <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-2.5 text-xs">
                         <div className="flex items-center justify-between border-b border-amber-500/20 pb-2 font-bold text-amber-900 dark:text-amber-200">
                           <span className="flex items-center gap-1.5">
                             <Utensils className="h-4 w-4 text-amber-600" />
-                            一日三餐健康养生食谱 · 3 Meals Recipes
+                            {t("一日三餐健康养生食谱", "Three-Meal Seasonal Wellness Recipes", "一日三餐健康養生食譜")}
                           </span>
                           <span className="text-[11px] rounded-full bg-amber-500/15 px-2 py-0.5 font-medium">
-                            {item.recipes.wellnessGoal}
+                            {isZh ? item.recipes.wellnessGoal : (item.recipes.wellnessGoalEn || item.recipes.wellnessGoal)}
                           </span>
                         </div>
 
                         <div className="space-y-2 pt-1">
                           <div className="rounded-lg bg-card p-2.5 border border-border/60 shadow-2xs">
                             <p className="font-bold text-foreground flex items-center gap-1">
-                              <span>🌅 早餐 Breakfast：</span>
-                              <span>{item.recipes.breakfast.name}</span>
+                              <span>{t("🌅 早餐：", "🌅 Breakfast: ", "🌅 早餐：")}</span>
+                              <span>{isZh ? item.recipes.breakfast.name : item.recipes.breakfast.nameEn}</span>
                             </p>
                             <p className="text-[11px] text-muted-foreground mt-1">
-                              <strong>食材清单：</strong>{item.recipes.breakfast.ingredients}
+                              <strong>{t("食材清单：", "Ingredients: ", "食材清單：")}</strong>
+                              {isZh ? item.recipes.breakfast.ingredients : item.recipes.breakfast.ingredientsEn}
                             </p>
                             <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
-                              <strong>烹饪/养生要旨：</strong>{item.recipes.breakfast.tip}
+                              <strong>{t("烹饪/养生要旨：", "Cooking & Wellness Tips: ", "烹飪/養生要旨：")}</strong>
+                              {isZh ? item.recipes.breakfast.tip : item.recipes.breakfast.tipEn}
                             </p>
                           </div>
 
                           <div className="rounded-lg bg-card p-2.5 border border-border/60 shadow-2xs">
                             <p className="font-bold text-foreground flex items-center gap-1">
-                              <span>☀️ 午餐 Lunch：</span>
-                              <span>{item.recipes.lunch.name}</span>
+                              <span>{t("☀️ 午餐：", "☀️ Lunch: ", "☀️ 午餐：")}</span>
+                              <span>{isZh ? item.recipes.lunch.name : item.recipes.lunch.nameEn}</span>
                             </p>
                             <p className="text-[11px] text-muted-foreground mt-1">
-                              <strong>食材清单：</strong>{item.recipes.lunch.ingredients}
+                              <strong>{t("食材清单：", "Ingredients: ", "食材清單：")}</strong>
+                              {isZh ? item.recipes.lunch.ingredients : item.recipes.lunch.ingredientsEn}
                             </p>
                             <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
-                              <strong>烹饪/养生要旨：</strong>{item.recipes.lunch.tip}
+                              <strong>{t("烹饪/养生要旨：", "Cooking & Wellness Tips: ", "烹飪/養生要旨：")}</strong>
+                              {isZh ? item.recipes.lunch.tip : item.recipes.lunch.tipEn}
                             </p>
                           </div>
 
                           <div className="rounded-lg bg-card p-2.5 border border-border/60 shadow-2xs">
                             <p className="font-bold text-foreground flex items-center gap-1">
-                              <span>🌙 晚餐 Dinner：</span>
-                              <span>{item.recipes.dinner.name}</span>
+                              <span>{t("🌙 晚餐：", "🌙 Dinner: ", "🌙 晚餐：")}</span>
+                              <span>{isZh ? item.recipes.dinner.name : item.recipes.dinner.nameEn}</span>
                             </p>
                             <p className="text-[11px] text-muted-foreground mt-1">
-                              <strong>食材清单：</strong>{item.recipes.dinner.ingredients}
+                              <strong>{t("食材清单：", "Ingredients: ", "食材清單：")}</strong>
+                              {isZh ? item.recipes.dinner.ingredients : item.recipes.dinner.ingredientsEn}
                             </p>
                             <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
-                              <strong>烹饪/养生要旨：</strong>{item.recipes.dinner.tip}
+                              <strong>{t("烹饪/养生要旨：", "Cooking & Wellness Tips: ", "烹飪/養生要旨：")}</strong>
+                              {isZh ? item.recipes.dinner.tip : item.recipes.dinner.tipEn}
                             </p>
                           </div>
                         </div>
@@ -361,10 +397,10 @@ export function DailyPage() {
         onClose={() => setIsAuthOpen(false)}
         onSuccess={(email) => {
           setCurrentUser(email);
-          const t = getStoredToken();
-          if (t) {
-            setToken(t);
-            loadDaily(t);
+          const tr = getStoredToken();
+          if (tr) {
+            setToken(tr);
+            loadDaily(tr);
           }
         }}
       />

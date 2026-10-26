@@ -32,7 +32,7 @@ export function LayerBadge({ kind }: { kind: LayerKind }) {
 }
 
 export function WuxingHeaderTag({ element }: { element: WuxingElement }) {
-  const { t } = useI18n();
+  const { t, isZh } = useI18n();
 
   const configs: Record<WuxingElement, { zh: string; en: string; meaning: string; style: string }> =
     {
@@ -74,8 +74,10 @@ export function WuxingHeaderTag({ element }: { element: WuxingElement }) {
     <div
       className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium shadow-2xs ${item.style}`}
     >
-      <span className="font-bold">五行 · {item.zh}</span>
-      <span className="text-[10px] opacity-80">({item.en})</span>
+      <span className="font-bold">
+        {isZh ? `五行 · ${item.zh}` : `Element · ${item.en}`}
+      </span>
+      {isZh && <span className="text-[10px] opacity-80">({item.en})</span>}
       <span className="opacity-40">|</span>
       <span className="text-[10px]">{item.meaning}</span>
     </div>

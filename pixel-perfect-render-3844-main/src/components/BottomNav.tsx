@@ -3,7 +3,7 @@ import { Home, Sprout, BookOpen, Sun, ShieldCheck } from "lucide-react";
 import { useI18n } from "../lib/i18n";
 
 export function BottomNav() {
-  const { t } = useI18n();
+  const { t, isZh } = useI18n();
 
   const items = [
     {
@@ -74,14 +74,14 @@ export function BottomNav() {
                 <span
                   className={`absolute -top-1 -right-2 rounded-full px-1 text-[8px] font-extrabold leading-none ${elementColor}`}
                 >
-                  {elementZh}
+                  {isZh ? elementZh : elementEn.slice(0, 2)}
                 </span>
               </div>
               <span className="mt-1 text-[11px] leading-tight font-medium tracking-tight">
                 {label}
               </span>
               <span className="text-[8px] opacity-70 leading-none">
-                {elementEn}
+                {isZh ? elementEn : elementZh}
               </span>
             </Link>
           </li>

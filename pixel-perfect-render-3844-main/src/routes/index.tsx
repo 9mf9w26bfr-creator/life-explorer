@@ -418,18 +418,19 @@ function ElementArtCard({
   desc: string;
   color: string;
 }) {
+  const { isZh } = useI18n();
   return (
     <div className={`flex flex-col items-center overflow-hidden rounded-xl border bg-card p-1.5 shadow-2xs ${color}`}>
       <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted">
         <img
           src={img}
-          alt={zh}
+          alt={isZh ? zh : en}
           className="h-full w-full object-cover transition-transform hover:scale-110"
           loading="lazy"
         />
       </div>
-      <span className="mt-1 font-bold text-xs">{zh}</span>
-      <span className="text-[9px] opacity-75">{en}</span>
+      <span className="mt-1 font-bold text-xs">{isZh ? zh : en}</span>
+      <span className="text-[9px] opacity-75">{isZh ? en : zh}</span>
       <span className="text-[8px] opacity-60 text-center leading-tight mt-0.5 line-clamp-1">{desc}</span>
     </div>
   );
