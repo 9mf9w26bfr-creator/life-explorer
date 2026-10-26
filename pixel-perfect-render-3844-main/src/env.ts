@@ -1,6 +1,8 @@
 export const env = {
   ADMIN_PASSWORD:
-    (import.meta.env["ADMIN_PASSWORD"] as string | undefined) || process.env["ADMIN_PASSWORD"],
+    (import.meta.env["ADMIN_PASSWORD"] as string | undefined) ||
+    process.env["ADMIN_PASSWORD"] ||
+    "1234",
   AUTH_SECRET:
     (import.meta.env["AUTH_SECRET"] as string | undefined) ||
     process.env["AUTH_SECRET"] ||

@@ -132,10 +132,10 @@ export function AdminPage() {
               <Lock className="h-6 w-6" />
             </div>
             <h2 className="font-serif text-base font-bold text-foreground">
-              请输入管理员管理密钥
+              请输入管理员管理密码
             </h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              对应环境变量 <code className="rounded bg-muted px-1.5 py-0.5 font-mono">ADMIN_PASSWORD</code> (默认：admin888)
+              管理员专属密码：<code className="rounded bg-muted px-2 py-0.5 font-mono font-bold text-foreground">1234</code>
             </p>
 
             {error && (
