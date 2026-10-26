@@ -15,7 +15,7 @@
     "deploy:prebuilt": "vercel deploy --prebuilt --prod"
   },
   "overrides": {
-    "rolldown": "1.2.1",
+    "rolldown": "1.2.15",
     "@tanstack/start-server-core": "1.169.40",
     "@tanstack/router-core": "1.171.35",
     "@tanstack/react-router": "1.170.42",
