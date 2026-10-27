@@ -222,10 +222,7 @@ export function AdminPage() {
               请输入管理员管理密码
             </h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              管理员专属密码：
-              <code className="rounded bg-muted px-2 py-0.5 font-mono font-bold text-foreground">
-                1234
-              </code>
+              此后台受权限保护，仅限平台管理员访问
             </p>
 
             {error && (

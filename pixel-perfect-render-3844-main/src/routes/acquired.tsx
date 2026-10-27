@@ -10,6 +10,8 @@ import {
   likertScore,
   type LikertQuestion,
   type IQQuestion,
+  type AssessmentSet,
+  generateRandomizedAssessment,
 } from "@/lib/questions";
 import { ACQUIRED_KEY, addVersion, getVersions, type Version } from "@/lib/profileStore";
 import { getStoredToken } from "@/lib/authClient";
@@ -336,6 +338,12 @@ function AcquiredPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [restoredDraft, setRestoredDraft] = useState(false);
+  const [assessmentSet, setAssessmentSet] = useState<AssessmentSet>(() => ({
+    iq,
+    eq,
+    comm,
+    wellbeing,
+  }));
 
   useEffect(() => {
     const token = getStoredToken();
@@ -353,11 +361,20 @@ function AcquiredPage() {
       setVersions(getVersions<Result>(ACQUIRED_KEY));
     }
 
-    // 检查本地防掉线进度草稿
+    // 检查本地防掉线进度草稿与专属随机题目
     try {
       const rawDraft = localStorage.getItem(DRAFT_KEY);
       if (rawDraft) {
         const draft = JSON.parse(rawDraft);
+        if (
+          draft.questions &&
+          Array.isArray(draft.questions.iq) &&
+          draft.questions.iq.length === 20 &&
+          Array.isArray(draft.questions.eq) &&
+          draft.questions.eq.length === 10
+        ) {
+          setAssessmentSet(draft.questions);
+        }
         if (draft.answers && Array.isArray(draft.answers) && draft.answers.length > 0) {
           setAnswers(draft.answers);
           setStep(Math.min(draft.step || 0, TOTAL - 1));
@@ -371,14 +388,44 @@ function AcquiredPage() {
 
   const latest = versions[versions.length - 1];
 
+  function startOrResumeQuiz() {
+    let currentSet = assessmentSet;
+    // 若为初次开始（非恢复既有草稿），为用户随机抽取从易到难专属 50 题
+    if (!restoredDraft) {
+      const token = getStoredToken();
+      currentSet = generateRandomizedAssessment(token || undefined);
+      setAssessmentSet(currentSet);
+      setAnswers([]);
+      setStep(0);
+      try {
+        localStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({
+            step: 0,
+            answers: [],
+            questions: currentSet,
+            updatedAt: Date.now(),
+          }),
+        );
+      } catch (e) {
+        console.warn("Draft init save error:", e);
+      }
+    }
+    setTaking(true);
+  }
+
   // ===== 当前题目逻辑 =====
   const part = PARTS.find((p) => step >= p.start && step < p.end)!;
   const isIQ = part.key === "iq";
   const idxInPart = step - part.start;
 
   const rawQ = isIQ
-    ? iq[step]
-    : (part.key === "eq" ? eq : part.key === "comm" ? comm : wellbeing)[idxInPart];
+    ? assessmentSet.iq[step]
+    : (part.key === "eq"
+        ? assessmentSet.eq
+        : part.key === "comm"
+          ? assessmentSet.comm
+          : assessmentSet.wellbeing)[idxInPart];
 
   const q = rawQ!;
   const options = isIQ ? (q as IQQuestion).options : likertScale;
@@ -389,7 +436,7 @@ function AcquiredPage() {
     next[step] = i;
     setAnswers(next);
 
-    // 实时持久化防掉线
+    // 实时持久化防掉线（保存当前题目集 + 已选答案 + 当前题号）
     const nextStep = step < TOTAL - 1 ? step + 1 : step;
     try {
       localStorage.setItem(
@@ -397,6 +444,7 @@ function AcquiredPage() {
         JSON.stringify({
           step: nextStep,
           answers: next,
+          questions: assessmentSet,
           updatedAt: Date.now(),
         }),
       );
@@ -409,10 +457,10 @@ function AcquiredPage() {
     }
 
     // 完成全部 50 题后结算
-    const iqScore = iq.reduce((s, qItem, k) => s + (next[k] === qItem.answer ? 1 : 0), 0);
-    const eqScore = likertScore(eq, next.slice(20, 30));
-    const commScore = likertScore(comm, next.slice(30, 40));
-    const wellbeingScore = likertScore(wellbeing, next.slice(40, 50));
+    const iqScore = assessmentSet.iq.reduce((s, qItem, k) => s + (next[k] === qItem.answer ? 1 : 0), 0);
+    const eqScore = likertScore(assessmentSet.eq, next.slice(20, 30));
+    const commScore = likertScore(assessmentSet.comm, next.slice(30, 40));
+    const wellbeingScore = likertScore(assessmentSet.wellbeing, next.slice(40, 50));
 
     const resultData: Result = {
       iq: iqScore,
@@ -849,7 +897,7 @@ function AcquiredPage() {
           )}
 
           <button
-            onClick={() => setTaking(true)}
+            onClick={startOrResumeQuiz}
             className="w-full py-3.5 rounded-lg font-medium text-white flex items-center justify-center gap-2 shadow hover:opacity-95 transition-all"
             style={{ backgroundColor: ELEMENT.water.border }}
           >
